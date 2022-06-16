@@ -22,7 +22,14 @@ func NewLog() *Log {
 }
 
 func (c *Log) Append(record Record) (uint64, error) {
+	// Ensure only 1 goroutine can access a variable at
+	// a time to avoid conflicts. This is called mutual exclusion
+	// and the data structure name for that is mutex.
 	c.mu.Lock()
+
+	// Unlock can be called anywhere in the method as deferred
+	// functions are executed after the expression list
+	// of the return statement is evaluated.
 	defer c.mu.Unlock()
 
 	record.Offset = uint64(len(c.records))

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -41,5 +42,54 @@ func NewHttpServer(address string) *http.Server {
 func newHttpServer() *httpServer {
 	return &httpServer{
 		Log: NewLog(),
+	}
+}
+
+func (s *httpServer) handleProduce(w http.ResponseWriter, r *http.Request) {
+	var request ProduceRequest
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	offset, err := s.Log.Append(request.Record)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response := ProduceResponse{Offset: offset}
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (s *httpServer) handleConsume(w http.ResponseWriter, r *http.Request) {
+	var request ConsumeRequest
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	record, err := s.Log.Read(request.Offset)
+	if err == ErrOffsetNotFound {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response := ConsumeResponse{Record: record}
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }

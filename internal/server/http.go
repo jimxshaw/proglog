@@ -7,6 +7,19 @@ import (
 	"github.com/gorilla/mux"
 )
 
+/*
+A Go web server has a function called HandleFunc(w, *r) for each of the API's endpoints.
+This web server has two endpoints, Produce for writing to the commit log and Consume for
+reading from the commit log.
+
+A json/http Go server typically has 3 steps:
+1) Unmarshal the request's json body into a struct.
+2) Run the endpoint's logic with the request to get a result.
+3) Marshal and write the result to the response.
+
+More complex web servers will need to move the handlers into http middleware.
+*/
+
 type httpServer struct {
 	Log *Log
 }

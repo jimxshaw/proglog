@@ -25,18 +25,25 @@ type httpServer struct {
 }
 
 type ProduceRequest struct {
+	// Record that the API caller wants to
+	// append to the log.
 	Record Record `json:"record"`
 }
 
 type ProduceResponse struct {
+	// Tells the caller what offset the
+	// log stored the records under.
 	Offset uint64 `json:"offset"`
 }
 
 type ConsumeRequest struct {
+	// States which records the API
+	// caller wants to read.
 	Offset uint64 `json:"offset"`
 }
 
 type ConsumeResponse struct {
+	// Sends back the records to the API caller.
 	Record Record `json:"record"`
 }
 

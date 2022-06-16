@@ -10,11 +10,8 @@ E.g.
 Kafka
 Individual records are identified using <topic, partition, offset>.
 
-Topic: movies
-============= 0      1      2      3      4      ...
-Partion 0     video  video  video
-Partion 1     video  video  
-Partion 2     video  video  video  video
-
+![Example Kafka Topic][ExampleKafkaTopic]
 
 Commit logs provide a source of truth for what occurred in a system and in what order.
+
+[ExampleKafkaTopic]: https://quarkus.io/assets/images/posts/kafka-commit-strategies/topics-partitions.png
